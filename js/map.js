@@ -511,23 +511,29 @@
 
   function setModalPhoto(src, alt) {
     const img = els.modalPhoto;
-    const reveal = () => img.classList.add("is-ready");
+    // мгновенно прячем — без fade-out, иначе видно прошлое фото
+    img.style.transition = "none";
     img.classList.remove("is-ready");
-    img.onload = () => {
-      img.onload = null;
-      img.onerror = null;
-      reveal();
-    };
-    img.onerror = () => {
-      img.onload = null;
-      img.onerror = null;
-      reveal();
-    };
-    img.alt = alt;
-    // сброс, чтобы не мелькал прошлый кадр
     img.removeAttribute("src");
-    img.src = src;
-    if (img.complete && img.naturalWidth > 0) reveal();
+    img.alt = alt;
+    void img.offsetWidth;
+    img.style.transition = "";
+
+    const token = String(Date.now());
+    img.dataset.photoToken = token;
+
+    const probe = new Image();
+    probe.onload = () => {
+      if (img.dataset.photoToken !== token) return;
+      img.src = src;
+      img.classList.add("is-ready");
+    };
+    probe.onerror = () => {
+      if (img.dataset.photoToken !== token) return;
+      img.src = src;
+      img.classList.add("is-ready");
+    };
+    probe.src = src;
   }
 
   function openModal(countryId, region) {
