@@ -509,13 +509,33 @@
     leaveCountryFocus({ restoreWorld: true });
   }
 
+  function setModalPhoto(src, alt) {
+    const img = els.modalPhoto;
+    const reveal = () => img.classList.add("is-ready");
+    img.classList.remove("is-ready");
+    img.onload = () => {
+      img.onload = null;
+      img.onerror = null;
+      reveal();
+    };
+    img.onerror = () => {
+      img.onload = null;
+      img.onerror = null;
+      reveal();
+    };
+    img.alt = alt;
+    // сброс, чтобы не мелькал прошлый кадр
+    img.removeAttribute("src");
+    img.src = src;
+    if (img.complete && img.naturalWidth > 0) reveal();
+  }
+
   function openModal(countryId, region) {
     const country = window.COFFEE_DATA[countryId];
     els.modalSwatch.style.background = country.color;
     els.modalCountry.textContent = country.name;
     els.modalRegion.textContent = region.name;
-    els.modalPhoto.src = region.photo;
-    els.modalPhoto.alt = `${region.name}, ${country.name}`;
+    setModalPhoto(region.photo, `${region.name}, ${country.name}`);
     els.modalTaste.textContent = region.taste;
     els.modalConditions.textContent = region.conditions;
     els.modalNote.textContent = region.note;
@@ -527,6 +547,9 @@
   function closeModal() {
     els.modal.classList.remove("is-open");
     els.modal.setAttribute("aria-hidden", "true");
+    els.modalPhoto.classList.remove("is-ready");
+    els.modalPhoto.removeAttribute("src");
+    els.modalPhoto.alt = "";
   }
 
   function isValidEmail(value) {
