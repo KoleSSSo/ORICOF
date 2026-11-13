@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ORICOF – карта происхождения кофе</title>
+  <link rel="icon" href="assets/oricof-icon.svg?v=6" type="image/svg+xml" sizes="any" />
+  <link rel="shortcut icon" href="assets/oricof-icon.svg?v=6" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="assets/oricof-icon.svg?v=6" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header class="nav">
+    <div class="nav__side nav__side--left">
+      <div class="search-box">
+        <label class="search" for="search-input">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="6.5" />
+            <path d="m16 16 4 4" />
+          </svg>
+          <input id="search-input" type="search" placeholder="Поиск страны или региона" autocomplete="off" />
+        </label>
+        <ul class="search-results" id="search-results" role="listbox"></ul>
+      </div>
+    </div>
+    <a class="logo" href="#" aria-label="ORICOF">
+      <img class="logo__img" src="assets/logo-text.svg" alt="ORICOF" />
+      <span class="logo__sub">кофе со всего мира</span>
+    </a>
+    <div class="nav__side nav__side--right">
+      <button class="icon-btn" id="cart-btn" type="button" aria-label="Корзина">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 7h15l-1.5 9h-12z" />
+          <path d="M6 7 5 3H2" />
+          <circle cx="9" cy="20" r="1.2" fill="currentColor" stroke="none" />
+          <circle cx="17" cy="20" r="1.2" fill="currentColor" stroke="none" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="stage">
+    <button class="back-btn" id="back-btn" type="button">
+      <svg class="back-btn__arrow" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M14.5 5.5 8 12l6.5 6.5" />
+      </svg>
+      <span>К карте мира</span>
+    </button>
+    <p class="country-title" id="country-title" aria-live="polite">Карта кофе мира</p>
+
+    <div class="map-wrap" id="map-wrap">
+      <div class="map-loader" id="map-loader" role="status" aria-live="polite">
+        <div class="map-loader__scene" aria-hidden="true">
+          <svg class="map-loader__svg" viewBox="0 0 120 140" width="120" height="140">
+            <!-- дальний край ободка: за струёй -->
+            <path class="map-loader__rim-back" d="M32 62 A28 7 0 0 1 88 62" />
+            <path class="map-loader__stream" d="M60 8 C60 8 58 36 60 54 C62 36 60 8 60 8 Z" />
+            <clipPath id="cup-fill-clip">
+              <path d="M36 66 v30 c0 11 11 17 24 17 s24-6 24-17 V66 Z" />
+            </clipPath>
+            <g clip-path="url(#cup-fill-clip)">
+              <g class="map-loader__liquid">
+                <rect class="map-loader__fill" x="34" y="72" width="52" height="41" />
+                <ellipse class="map-loader__surface" cx="60" cy="74" rx="22" ry="4.5" />
+              </g>
+            </g>
+            <path class="map-loader__cup" d="M32 62 v36 c0 14 14 22 28 22 s28-8 28-22 V62" />
+            <!-- ближний край ободка: поверх струи и кофе -->
+            <path class="map-loader__rim-front" d="M32 62 A28 7 0 0 0 88 62" />
+            <path class="map-loader__handle" d="M88 72 c14 2 16 22 2 28" />
+          </svg>
+        </div>
+        <p class="map-loader__text">Заливаем карту...</p>
+      </div>
+      <div id="map-host"></div>
+    </div>
+
+    <div class="controls">
+      <div class="zoom-group" aria-label="Масштаб">
+        <button id="zoom-in" type="button" aria-label="Приблизить">+</button>
+        <button id="zoom-out" type="button" aria-label="Отдалить">−</button>
+      </div>
+    </div>
+  </main>
+
+  <div class="modal cart-modal" id="cart-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="cart-title">
+    <div class="modal__card cart-modal__card">
+      <div class="modal__top">
+        <div>
+          <p class="modal__eyebrow">ORICOF</p>
+          <h2 class="modal__title" id="cart-title">Покупка кофе</h2>
+        </div>
+        <button class="icon-btn modal__close" id="cart-close" type="button" aria-label="Закрыть">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+          </svg>
+        </button>
+      </div>
+      <div id="cart-form-view">
+        <p class="cart-modal__lead">
+          Для покупки кофе, пожалуйста, укажите ваше имя и почту — мы с вами свяжемся.
+        </p>
+        <form class="cart-form" id="cart-form" novalidate>
+          <label class="cart-form__field">
+            <span>Имя</span>
+            <input id="cart-name" name="name" type="text" autocomplete="name" required placeholder="Как к вам обращаться" />
+          </label>
+          <label class="cart-form__field">
+            <span>E-mail</span>
+            <input id="cart-email" name="email" type="email" autocomplete="email" required placeholder="you@example.com" />
+          </label>
+          <button class="cart-form__submit" type="submit">Подтвердить</button>
+          <p class="cart-form__status" id="cart-status" aria-live="polite"></p>
+        </form>
+      </div>
+      <div class="cart-success" id="cart-success" hidden>
+        <p class="cart-success__text">
+          Письмо успешно отправлено на почту <strong id="cart-success-email">email@email</strong>
+        </p>
+        <button class="cart-form__submit" id="cart-success-close" type="button">Хорошо</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-region">
+    <div class="modal__card">
+      <div class="modal__top">
+        <div>
+          <p class="modal__eyebrow">
+            <span class="modal__swatch" id="modal-swatch"></span>
+            <span id="modal-country">Страна</span>
+          </p>
+          <h2 class="modal__title" id="modal-region">Регион</h2>
+        </div>
+        <button class="icon-btn modal__close" id="modal-close" type="button" aria-label="Закрыть">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+          </svg>
+        </button>
+      </div>
+
+      <figure class="modal__photo">
+        <img id="modal-photo" src="" alt="" />
+      </figure>
+
+      <section class="modal__section">
+        <h3 class="modal__label">Вкус</h3>
+        <p class="modal__text" id="modal-taste"></p>
+      </section>
+
+      <section class="modal__section">
+        <h3 class="modal__label">Условия выращивания</h3>
+        <p class="modal__text" id="modal-conditions"></p>
+      </section>
+
+      <section class="modal__section">
+        <h3 class="modal__label">Описание</h3>
+        <p class="modal__text" id="modal-note"></p>
+      </section>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="js/bounds.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/map.js"></script>
+</body>
+</html>
