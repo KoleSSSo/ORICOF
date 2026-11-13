@@ -693,11 +693,11 @@ input {
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transition: opacity 0.2s ease;
 }
 
 .modal__photo img.is-ready {
   opacity: 1;
+  transition: opacity 0.18s ease;
 }
 
 .modal__section {
